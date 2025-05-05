@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
 # Copia os arquivos para dentro do container
 COPY . /var/www/html/
 
+# Muda o DocumentRoot do Apache para a pasta public
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf
+
 # Instala o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
