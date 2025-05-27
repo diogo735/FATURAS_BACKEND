@@ -6,21 +6,29 @@ RUN apt-get update && apt-get install -y \
     unzip \
     zip \
     git \
+    curl \
     && docker-php-ext-install pdo pdo_pgsql
 
-# Copiar código para o container
+# Instalar o Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copiar o projeto para o container
 COPY . /var/www/html
 
-# Corrigir o DocumentRoot para apontar para a pasta public/
+# Ir para a pasta do projeto
+WORKDIR /var/www/html
+
+# Instalar dependências do Laravel (depois de copiar o código)
+RUN composer install --no-dev --optimize-autoloader
+
+# Corrigir o DocumentRoot para a pasta public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/000-default.conf \
     /etc/apache2/sites-available/default-ssl.conf
 
-# Ativar mod_rewrite para Laravel
+# Ativar mod_rewrite do Apache (Laravel precisa disto)
 RUN a2enmod rewrite
 
-# Garantir permissões corretas para cache e storage
+# Dar permissões para storage e cache
 RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
-
-WORKDIR /var/www/html
