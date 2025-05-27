@@ -1,23 +1,22 @@
 FROM php:8.2-apache
 
-# Instalar dependências PHP e PostgreSQL
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    unzip \
-    zip \
-    git \
-    curl \
-    libzip-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip
-
-# Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copiar projeto
+# Copiar todos os ficheiros para o container
 COPY . /var/www/html
 
-# Dar permissões
+# Instalar extensões necessárias para o PostgreSQL
+RUN docker-php-ext-install pdo pdo_pgsql
+
+# Corrigir o DocumentRoot do Apache para apontar para a pasta "public"
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+    /etc/apache2/sites-available/000-default.conf \
+    /etc/apache2/sites-available/default-ssl.conf
+
+# Ativar o mod_rewrite do Apache (necessário para o Laravel)
+RUN a2enmod rewrite
+
+# Dar permissões às pastas necessárias
 RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Ativar rewrite para Laravel
-RUN a2enmod rewrite
+WORKDIR /var/www/html
