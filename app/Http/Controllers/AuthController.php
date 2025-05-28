@@ -22,7 +22,7 @@ class AuthController extends Controller
     }
 
     if (! Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'A palavra-passe ésta incorreta!'], 401);
+        return response()->json(['message' => 'A palavra-passe ésta incorreta'], 401);
     }
 
     // Revoga tokens anteriores
