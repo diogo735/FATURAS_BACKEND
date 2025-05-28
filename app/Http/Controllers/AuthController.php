@@ -17,7 +17,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Credenciais inválidas'], 401);
         }
 
@@ -28,4 +28,25 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ]);
     }
+
+    public function obterDadosUser($id)
+    {
+        if (auth()->id() != $id) {
+            return response()->json(['erro' => 'Acesso negado.'], 403);
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['erro' => 'Usuário não encontrado.'], 404);
+        }
+
+        return response()->json([
+            'id' => $user->id,
+            'nome' => $user->name,
+            'email' => $user->email,
+            'imagem' => $user->imagem,
+            'primeiro_login' => $user->primeiro_login,
+        ]);
+    }
+
 }
