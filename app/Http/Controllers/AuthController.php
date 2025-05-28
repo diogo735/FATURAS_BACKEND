@@ -29,24 +29,37 @@ class AuthController extends Controller
         ]);
     }
 
-    public function obterDadosUser($id)
-    {
-        if (auth()->id() != $id) {
-            return response()->json(['erro' => 'Acesso negado.'], 403);
-        }
+    public function obterDadosUser($id, Request $request)
+{
+    $user = User::find($id);
 
-        $user = User::find($id);
-        if (!$user) {
-            return response()->json(['erro' => 'Usuário não encontrado.'], 404);
-        }
-
-        return response()->json([
-            'id' => $user->id,
-            'nome' => $user->nome,
-            'email' => $user->email,
-            'imagem' => $user->imagem,
-            'primeiro_login' => $user->primeiro_login,
-        ]);
+    if (!$user) {
+        return response()->json(['error' => 'Usuário não encontrado'], 404);
     }
+
+    if ($request->user()->id !== $user->id) {
+        return response()->json(['error' => 'Acesso não autorizado'], 403);
+    }
+
+    // 1. Clona os dados do user antes de alterar
+    $dadosAntes = $user->replicate();
+
+    $mensagem = null;
+
+    // 2. Se for o primeiro login, só depois de exibir muda pra false
+    if ($user->primeiro_login) {
+        $user->primeiro_login = false;
+        $user->save();
+        $mensagem = 'primeiro_login foi alterado para false !!.';
+    }
+
+    // 3. Retorna os dados originais e mensagem
+    return response()->json([
+        'user' => $dadosAntes,
+        'mensagem' => $mensagem ?? 'primeiro_login já estava como false.'
+    ]);
+}
+
+
 
 }
