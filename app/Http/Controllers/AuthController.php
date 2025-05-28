@@ -18,11 +18,11 @@ class AuthController extends Controller
     $user = User::where('email', $request->email)->first();
 
     if (! $user) {
-        return response()->json(['message' => 'O email fornecido não está registado.'], 404);
+        return response()->json(['message' => 'Email não está registado!'], 404);
     }
 
     if (! Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'A pass está incorreta.'], 401);
+        return response()->json(['message' => 'A palavra-passe ésta incorreta!'], 401);
     }
 
     // Revoga tokens anteriores
