@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
+            $table->id(); // ID como chave primária
+            $table->string('nome');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->text('imagem')->nullable(); // Campo de imagem pode ser nulo
             $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->boolean('primeiro_login')->default(true); // Marca o primeiro login
+            $table->timestamps(); // Cria created_at e updated_at
         });
     }
 
