@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         return response()->json([
             'id' => $user->id,
-            'nome' => $user->name,
+            'nome' => $user->nome,
             'email' => $user->email,
             'imagem' => $user->imagem,
             'primeiro_login' => $user->primeiro_login,
