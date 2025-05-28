@@ -8,7 +8,7 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+ public function login(Request $request)
 {
     $request->validate([
         'email' => 'required|email',
@@ -17,11 +17,15 @@ class AuthController extends Controller
 
     $user = User::where('email', $request->email)->first();
 
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Credenciais inválidas'], 401);
+    if (! $user) {
+        return response()->json(['message' => 'O email fornecido não está registado.'], 404);
     }
 
-    // Revoga todos os tokens anteriores
+    if (! Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'A pass está incorreta.'], 401);
+    }
+
+    // Revoga tokens anteriores
     $user->tokens()->delete();
 
     // Cria novo token
@@ -33,6 +37,7 @@ class AuthController extends Controller
         'user' => $user
     ]);
 }
+
 
 
  public function logout(Request $request)
