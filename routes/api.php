@@ -16,3 +16,10 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 //dados do user
 Route::middleware('auth:sanctum')->get('/obter_dados_user/{id}', [AuthController::class, 'obterDadosUser']);
 
+//ping
+Route::get('/ping', function () {
+    return response()->json(['message' => 'online'], 200);
+});
+
+//recuparer pass e enviar por email
+Route::post('/recuperar_pass', [AuthController::class, 'RecuperarPass']);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -83,5 +85,35 @@ class AuthController extends Controller
 }
 
 
+public function RecuperarPass(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+    ]);
+
+    $email = $request->email;
+
+    // Verifica se o utilizador existe
+    $user = User::where('email', $email)->first();
+
+    if (!$user) {
+        return response()->json([
+            'message' => 'Email não está associado a nenhum utulizador.'
+        ], 404);
+    }
+
+    // Gera nova password
+    $password = Str::random(6);
+    $user->password = Hash::make($password);
+    $user->save();
+
+    // Envia email com nova password
+   Mail::to($email)->send(new \App\Mail\SendPasswordMail($password, $email, $user->nome));
+
+
+    return response()->json([
+        'message' => 'Nova password gerada e enviada por email.'
+    ]);
+}
 
 }
