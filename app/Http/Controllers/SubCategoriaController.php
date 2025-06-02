@@ -116,7 +116,7 @@ public function store(Request $request)
         ], 404);
     } catch (\Exception $e) {
         return response()->json([
-            'erro' => 'Erro ao atualizar subcategoria.',
+            'erro' => 'Erro ao atualizar subcategoria. da api',
             'detalhes' => $e->getMessage()
         ], 500);
     }
