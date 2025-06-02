@@ -5,6 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 
+require __DIR__.'/api/sub_categorias.php';
+require __DIR__.'/api/movimentos.php';
+require __DIR__.'/api/faturas.php';
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

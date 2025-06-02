@@ -29,4 +29,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'primeiro_login' => 'boolean',
     ];
+    public function subCategorias()
+{
+    return $this->hasMany(SubCategoria::class);
 }
+
+}
+
