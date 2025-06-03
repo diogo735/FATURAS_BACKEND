@@ -63,7 +63,7 @@ class FaturaController extends Controller
         }
     }
 
- public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         try {
             $user = $request->user();
@@ -73,18 +73,7 @@ class FaturaController extends Controller
             })->firstOrFail();
 
             $validated = $request->validate([
-                'movimento_id' => 'sometimes|exists:movimentos,id',
-                'tipo_documento' => 'sometimes|string',
-                'numero_fatura' => 'sometimes|string',
-                'data_fatura' => 'sometimes|date',
-                'nif_emitente' => 'sometimes|string',
-                'codigo_ATCUD' => 'sometimes|string',
-                'nome_empresa' => 'nullable|string',
-                'nif_cliente' => 'nullable|string',
                 'descricao' => 'nullable|string',
-                'total_iva' => 'sometimes|numeric',
-                'total_final' => 'sometimes|numeric',
-                'imagem_fatura' => 'nullable|string',
                 'updated_at' => 'required|date',
             ]);
 
