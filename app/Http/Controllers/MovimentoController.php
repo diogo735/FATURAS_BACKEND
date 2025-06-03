@@ -75,10 +75,8 @@ class MovimentoController extends Controller
             $validated = $request->validate([
                 'categoria_id' => 'required|exists:categorias,id',
                 'sub_categoria_id' => 'nullable|exists:sub_categorias,id',
-                'valor' => 'required|numeric',
-                'data_movimento' => 'required|date',
                 'nota' => 'nullable|string',
-                'updated_at' => 'required|date'
+                'updated_at' => 'required|date',
             ], [
                 'categoria_id.required' => 'O campo categoria é obrigatório.',
                 'categoria_id.exists' => 'A categoria selecionada é inválida.',
@@ -106,28 +104,28 @@ class MovimentoController extends Controller
     }
 
 
-   public function destroy(Request $request, $id)
-{
-    try {
-        $user = $request->user();
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
 
-        $mov = Movimento::where('id', $id)
-                        ->where('user_id', $user->id)
-                        ->first();
+            $mov = Movimento::where('id', $id)
+                ->where('user_id', $user->id)
+                ->first();
 
-        if (!$mov) {
-            return response()->json(['erro' => 'Movimento não encontrado ou não pertence ao utilizador.'], 404);
+            if (!$mov) {
+                return response()->json(['erro' => 'Movimento não encontrado ou não pertence ao utilizador.'], 404);
+            }
+
+            $mov->delete();
+
+            return response()->json(['mensagem' => 'Movimento apagado com sucesso.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'erro' => 'Erro ao apagar movimento.',
+                'detalhes' => $e->getMessage()
+            ], 500);
         }
-
-        $mov->delete();
-
-        return response()->json(['mensagem' => 'Movimento apagado com sucesso.']);
-    } catch (\Exception $e) {
-        return response()->json([
-            'erro' => 'Erro ao apagar movimento.',
-            'detalhes' => $e->getMessage()
-        ], 500);
     }
-}
 
 }
