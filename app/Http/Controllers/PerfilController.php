@@ -7,16 +7,27 @@ use Illuminate\Support\Facades\Auth;
 
 class PerfilController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
+    public function index(Request $request)
+{
+    $user = Auth::user();
 
-        return response()->json([
-            'nome' => $user->nome,
-            'email' => $user->email,
-            'imagem' => $user->imagem, // já é uma URL
-        ]);
+    if ($request->has('updated_since')) {
+        $since = $request->query('updated_since');
+
+        if (!$user->updated_at || $user->updated_at->lte($since)) {
+            return response()->json([
+                'mensagem' => 'Sem atualizações no perfil.'
+            ]);
+        }
     }
+
+    return response()->json([
+        'nome' => $user->nome,
+        'email' => $user->email,
+        'imagem' => $user->imagem, // URL completa
+        'updated_at' => $user->updated_at
+    ]);
+}
 
     public function store(Request $request)
     {
