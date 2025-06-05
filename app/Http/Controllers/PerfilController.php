@@ -39,7 +39,7 @@ class PerfilController extends Controller
             'imagem' => 'nullable|url',
         ]);
 
-        $user->name = $request->nome;
+        $user->nome = $request->nome;
 
         if ($request->filled('imagem')) {
             $user->imagem = $request->imagem;
