@@ -12,7 +12,7 @@ class PerfilController extends Controller
         $user = Auth::user();
 
         return response()->json([
-            'nome' => $user->name,
+            'nome' => $user->nome,
             'email' => $user->email,
             'imagem' => $user->imagem, // já é uma URL
         ]);
