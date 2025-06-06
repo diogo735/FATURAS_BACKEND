@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class PerfilController extends Controller
 {
@@ -30,23 +31,29 @@ class PerfilController extends Controller
 }
 
     public function store(Request $request)
-    {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+{
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
 
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'imagem' => 'nullable|url',
-        ]);
+    $request->validate([
+        'nome' => 'required|string|max:255',
+        'password' => 'nullable|string|min:4|confirmed', // Campo de nova senha
+        'imagem' => 'nullable|url',
+    ]);
 
-        $user->nome = $request->nome;
+    $user->nome = $request->nome;
 
-        if ($request->filled('imagem')) {
-            $user->imagem = $request->imagem;
-        }
-
-        $user->save();
-
-        return response()->json(['mensagem' => 'Perfil atualizado com sucesso!']);
+    if ($request->filled('imagem')) {
+        $user->imagem = $request->imagem;
     }
+
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password); // Encripta e salva
+    }
+
+    $user->save();
+
+    return response()->json(['mensagem' => 'Perfil atualizado com sucesso!']);
+}
+
 }
