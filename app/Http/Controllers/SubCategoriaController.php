@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 
 class SubCategoriaController extends Controller
 {
-    // Buscar subcategorias do user
     public function index(Request $request)
     {
         $user = $request->user();
@@ -31,7 +30,6 @@ class SubCategoriaController extends Controller
     }
 
 
-    // Criar nova subcategoria
     public function store(Request $request)
     {
         try {
@@ -45,7 +43,6 @@ class SubCategoriaController extends Controller
                 'updated_at' => 'nullable|date',
             ]);
 
-            // Verifica duplicado para o mesmo user
             $existe = SubCategoria::where('user_id', $user->id)
                 ->where('nome_subcat', $validated['nome_subcat'])
                 ->exists();
@@ -53,7 +50,7 @@ class SubCategoriaController extends Controller
             if ($existe) {
                 return response()->json([
                     'erro' => 'Já existe uma subcategoria com esse nome para este utilizador.'
-                ], 409); // 409 Conflict
+                ], 409);
             }
 
             $validated['user_id'] = $user->id;
@@ -74,21 +71,17 @@ class SubCategoriaController extends Controller
 
 
 
-    // Atualizar subcategoria existente
    public function update(Request $request, $id)
 {
     try {
         $user = $request->user();
 
-        // 🔍 Loga o conteúdo recebido da requisição
         Log::info('🔄 Dados recebidos para atualização de subcategoria:', $request->all());
 
-        // ✅ Busca a subcategoria do user
         $subCat = SubCategoria::where('id', $id)
             ->where('user_id', $user->id)
             ->firstOrFail();
 
-        // ✅ Valida os dados da requisição
         $validated = $request->validate([
             'categoria_id' => 'required|exists:categorias,id',
             'nome_subcat' => 'required|string',
@@ -103,7 +96,6 @@ class SubCategoriaController extends Controller
             'cor_subcat.required' => 'A cor da subcategoria é obrigatória.',
         ]);
 
-        // ⚠️ Verifica se outra subcategoria com mesmo nome já existe para este user
         $existe = SubCategoria::where('user_id', $user->id)
             ->whereRaw('LOWER(nome_subcat) = ?', [strtolower($validated['nome_subcat'])])
             ->where('id', '!=', $subCat->id)
@@ -115,7 +107,6 @@ class SubCategoriaController extends Controller
             ], 409);
         }
 
-        // ✅ Atualiza a subcategoria
         $subCat->update($validated);
 
         return response()->json([
@@ -143,7 +134,6 @@ class SubCategoriaController extends Controller
 
 
 
-    // Deletar subcategoria
     public function destroy(Request $request, $id)
     {
         try {

@@ -27,10 +27,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'A palavra-passe ésta incorreta'], 401);
     }
 
-    // Revoga tokens anteriores
-   // $user->tokens()->delete();
 
-    // Cria novo token
     $token = $user->createToken('auth_token')->plainTextToken;
 
     return response()->json([
@@ -65,19 +62,16 @@ class AuthController extends Controller
         return response()->json(['error' => 'Acesso não autorizado'], 403);
     }
 
-    // 1. Clona os dados do user antes de alterar
     $dadosAntes = $user->replicate();
 
     $mensagem = null;
 
-    // 2. Se for o primeiro login, só depois de exibir muda pra false
     if ($user->primeiro_login) {
         $user->primeiro_login = false;
         $user->save();
         $mensagem = 'primeiro_login foi alterado para false !!.';
     }
 
-    // 3. Retorna os dados originais e mensagem
     return response()->json([
         'user' => $dadosAntes,
         'mensagem' => $mensagem ?? 'primeiro_login já estava como false.'
@@ -93,7 +87,6 @@ public function RecuperarPass(Request $request)
 
     $email = $request->email;
 
-    // Verifica se o utilizador existe
     $user = User::where('email', $email)->first();
 
     if (!$user) {
@@ -102,12 +95,10 @@ public function RecuperarPass(Request $request)
         ], 404);
     }
 
-    // Gera nova password
     $password = Str::random(6);
     $user->password = Hash::make($password);
     $user->save();
 
-    // Envia email com nova password
    Mail::to($email)->send(new \App\Mail\SendPasswordMail($password, $email, $user->nome));
 
 

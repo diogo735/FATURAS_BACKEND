@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class FaturaController extends Controller
 {
-    // Listar faturas do utilizador, com suporte a updated_since
     public function index(Request $request)
     {
         $user = $request->user();
@@ -28,7 +27,6 @@ class FaturaController extends Controller
         return response()->json($faturas);
     }
 
-    // Criar fatura
     public function store(Request $request)
     {
         try {
@@ -90,7 +88,6 @@ class FaturaController extends Controller
             ], 500);
         }
     }
-    // Eliminar fatura
     public function destroy(Request $request, $id)
     {
         try {

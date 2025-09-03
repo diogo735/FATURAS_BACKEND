@@ -25,19 +25,18 @@ class PerfilController extends Controller
     return response()->json([
         'nome' => $user->nome,
         'email' => $user->email,
-        'imagem' => $user->imagem, // URL completa
+        'imagem' => $user->imagem,
         'updated_at' => $user->updated_at
     ]);
 }
 
     public function store(Request $request)
 {
-    /** @var \App\Models\User $user */
     $user = Auth::user();
 
     $request->validate([
         'nome' => 'required|string|max:255',
-        'password' => 'nullable|string|min:4|confirmed', // Campo de nova senha
+        'password' => 'nullable|string|min:4|confirmed',
         'imagem' => 'nullable|url',
     ]);
 
@@ -48,7 +47,7 @@ class PerfilController extends Controller
     }
 
     if ($request->filled('password')) {
-        $user->password = Hash::make($request->password); // Encripta e salva
+        $user->password = Hash::make($request->password);
     }
 
     $user->save();

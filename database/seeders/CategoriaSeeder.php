@@ -37,7 +37,6 @@ class CategoriaSeeder extends Seeder
             [ 'img_cat' => 'salario.png', 'cor_cat' => '#39C89E', 'nome_cat' => 'Salário' ],
         ];
 
-        // IDs dos tipos de movimento (ajuste conforme necessário)
         $idDespesa = DB::table('tipo_movimento')->where('nome_movimento', 'Despesa')->value('id');
         $idReceita = DB::table('tipo_movimento')->where('nome_movimento', 'Receita')->value('id');
 
